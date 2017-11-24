@@ -1,5 +1,6 @@
 package main;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
@@ -84,7 +85,7 @@ public class PopulaDB {
 		
 	}
 	
-private static void popula(Connection conn) {
+private static void popula(Connection conn) throws Exception {
 	
 	
 	    Iterator it = tabelas.entrySet().iterator();
@@ -107,7 +108,7 @@ private static void popula(Connection conn) {
 				
 				String nomeColuna;
 				String tipoColuna = null;
-				int tamanhoColuna;
+				int tamanhoColuna = 0;
 				int indiceColuna;
 				
 				int indexColuna = 0;
@@ -126,16 +127,27 @@ private static void popula(Connection conn) {
 					
 				for (int i = 0; i < qtdInserts; i++) {
 				
-					if (tipoColuna.equals("BIT") || tipoColuna.equals("INT")) {
+					if (tipoColuna.equals("INT")) {
 						
-						int 
-						ps.setInt(i, x);
-					}
-					
+						int valor = getIntAleatorio(tamanhoColuna);	
+						
+						ps.setInt(i, valor);
+						
+					} else if (tipoColuna.equals("BIT")) {
+						
+						ps.setShort(i, (short) 1);
+						
+					} else if (tipoColuna.equals("DATETIME")) {
+						
+						ps.setDate(i, getData());
+					} else if (tipoColuna.equals("FLOAT")) {
+						
+						ps.setFloat(i, getFloatAleatoria(tamanhoColuna));
+					} else {
+						
+						ps.setString(i, getStringAleatoria(tamanhoColuna));
+					}					
 				}
-				
-				
-				
 				
 				rs = ps.executeQuery();
 								
@@ -174,11 +186,11 @@ private static void popula(Connection conn) {
 		return retorno;
 	}
 	
-	private static Double getFloatAleatoria(int tamanho) {
+	private static float getFloatAleatoria(int tamanho) {
 		
 		Random random = new Random();
 			
-		double retorno = (double) (random.nextInt(tamanho) + 1);
+		float retorno = (float) (random.nextInt(tamanho) + 1);
 			
 		return retorno;
 	}
